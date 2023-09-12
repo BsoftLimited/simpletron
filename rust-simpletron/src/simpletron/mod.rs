@@ -1,4 +1,6 @@
 mod cpu;
+mod utils;
+mod assembler;
 
 pub use cpu::CPU;
 
