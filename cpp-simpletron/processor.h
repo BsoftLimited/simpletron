@@ -3,8 +3,6 @@
 
 #include <iostream>
 
-using namespace std;
-
 namespace simpletron{
     enum Operands{
         READ = 10,          // Read a word from the terminal into a specific location in memory

@@ -111,7 +111,6 @@ void simpletron::Processor::run(){
                     this->instructionCounter = this->operand;
                 break;
 
-            
             case simpletron::Operands::HALT:
                 std::cout<<"Program Halted"<<std::endl;
                 e = 100;

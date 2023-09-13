@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/Simpletron.dir/processor.cpp.o CMakeFiles/Simpletron.dir/main.cpp.o -o Simpletron 

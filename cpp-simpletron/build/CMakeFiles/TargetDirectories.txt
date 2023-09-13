@@ -1,0 +1,3 @@
+/home/bsoft-manjaro/Documents/Projects/simpletron/cpp-simpletron/build/CMakeFiles/Simpletron.dir
+/home/bsoft-manjaro/Documents/Projects/simpletron/cpp-simpletron/build/CMakeFiles/edit_cache.dir
+/home/bsoft-manjaro/Documents/Projects/simpletron/cpp-simpletron/build/CMakeFiles/rebuild_cache.dir
