@@ -53,21 +53,21 @@ impl Parser{
         while !matches!(self.current, Token::None){
             if let Token::Name(name) = &self.current{
                 match name.to_uppercase().as_str(){
-                    "RD"   => return self.init_opcode(0x1000),
-                    "WR"   => return self.init_opcode(0x1100),
+                    "RD"   => return self.init_opcode(1000),
+                    "WR"   => return self.init_opcode(1100),
 
-                    "LD"   => return self.init_opcode(0x2000),
-                    "STR"  => return self.init_opcode(0x2100),
+                    "LD"   => return self.init_opcode(2000),
+                    "STR"  => return self.init_opcode(2100),
 
-                    "ADD"  => return self.init_opcode(0x3000),
-                    "SUB"  => return self.init_opcode(0x3100),
-                    "DIV"  => return self.init_opcode(0x3200),
-                    "MUL"  => return self.init_opcode(0x3300),
+                    "ADD"  => return self.init_opcode(3000),
+                    "SUB"  => return self.init_opcode(3100),
+                    "DIV"  => return self.init_opcode(3200),
+                    "MUL"  => return self.init_opcode(3300),
 
-                    "BR"   => return self.init_branch(0x4000),
-                    "BRN"  => return self.init_branch(0x4000),
-                    "BRZ"  => return self.init_branch(0x4000),
-                    "HLT"  => return Expression::Opcode(0x4300),
+                    "BR"   => return self.init_branch(4000),
+                    "BRN"  => return self.init_branch(4100),
+                    "BRZ"  => return self.init_branch(4200),
+                    "HLT"  => return Expression::Opcode(4300),
 
                     _ => return self.init_subroutine(),
                 }
@@ -105,15 +105,14 @@ impl Parser{
     }
 
     fn init_subroutine(&mut self)->Expression{
-        let (mut step, mut name): (u16, Option<String>) = ( 0, None);
+        let  mut name: Option<String> =  None;
         loop{
             if let Token::Name(value) = &self.current{
-                if step == 0 && !is_nemonic(&value){
+                if name.is_none() && !is_nemonic(&value){
                     name = Some(value.clone());
-                    step = 1;
                 }
             }else if let Token::Colon = &self.current{
-                if step == 1{
+                if name.is_some(){
                     return Expression::Subroutine{ name: name.unwrap() };
                 }
             }else if let Token::None = self.current{

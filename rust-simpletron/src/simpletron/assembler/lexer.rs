@@ -2,9 +2,7 @@ use crate::simpletron::utils::Character;
 
 #[derive(Clone, Debug)]
 #[allow(dead_code)]
-pub enum Token{
-	Name(String), String(String), Number(String),
-	Colon, Coma, None}
+pub enum Token{ Name(String), Number(String), Colon,  None}
 
 pub struct Lexer{ index:usize, current:Character, data: String, to_newline: bool }
 impl Lexer{
@@ -43,8 +41,6 @@ impl Lexer{
 		}
 		match self.current.unwrap(){
 			':' => { self.pop(); return Ok(Token::Colon); },
-			',' => { self.pop(); return Ok(Token::Coma); },
-			'"' => return self.get_string_token(),
 			__  => return Result::Err(format!("unexpected token {} encountered", self.pop()))
 		}
 	}
@@ -69,20 +65,5 @@ impl Lexer{
             self.index += 1;
         }
 		return Ok(Token::Number(builder));
-	}
-	
-	fn get_string_token(&mut self)->Result<Token, String>{
-		let open = self.pop();
-		let mut builder = String::new();
-		while self.index < self.data.len(){
-		    let close = self.data.chars().nth(self.index).unwrap();
-			if close == open{
-                self.pop();
-                return Ok(Token::String( builder));
-			}else{
-				builder.push(self.pop());
-			}
-		}
-		return Err(format!("Expecting a closing {}", if open == '\''{ "'"} else {"\""}));
 	}
 }

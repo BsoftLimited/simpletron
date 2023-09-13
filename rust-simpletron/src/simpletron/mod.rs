@@ -1,8 +1,10 @@
 mod cpu;
-mod utils;
-mod assembler;
-
 pub use cpu::CPU;
+
+mod utils;
+
+mod assembler;
+pub use assembler::Assemblier;
 
 pub fn intro(){
     println!("*** Welcome to Simpletron! ***\n");
