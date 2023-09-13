@@ -1,2 +1,3 @@
 main
-rust-simpletron\target
+rust-simpletron/target
+cpp-simpletron/build

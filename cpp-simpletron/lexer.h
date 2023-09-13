@@ -2,7 +2,9 @@
 	#define LEXER
 
 #include <iostream>
+#include <string>
 
+#include "utils.h";
 namespace simpletron::assembler{
     enum TokenType{ Name, Number, Colon, None}
 
@@ -21,7 +23,7 @@ namespace simpletron::assembler{
     class Lexer{
         private:
             int index;
-            Character current;
+            utils::Character current;
             std::string data;
             bool to_newline;
             Token getNameToken();
