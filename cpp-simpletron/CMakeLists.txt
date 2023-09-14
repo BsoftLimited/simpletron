@@ -5,4 +5,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 project(Simpletron VERSION 1.0)
 
-add_executable(Simpletron processor.cpp main.cpp)
+add_executable(Simpletron lexer.cpp parser.cpp processor.cpp main.cpp)

@@ -8,15 +8,7 @@ fn is_nemonic(name: &str)->bool{
     return NEMONICS.contains(&name);
 }
 
-fn v_value(code: &str)->u32{
-    let mut init = code.to_uppercase();
-    init.remove(0);
-    return match init.as_ref(){
-        "A" => 10, "B" => 11, "C" => 12,
-        "D" => 13, "E" => 14, "F" => 15,
-        _ => { init.parse().unwrap() }
-    };
-}
+
 
 #[derive(Debug,Clone)]
 pub enum Expression{

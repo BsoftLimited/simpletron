@@ -4,9 +4,10 @@
 #include <iostream>
 #include <string>
 
-#include "utils.h";
+#include "utils.h"
+
 namespace simpletron::assembler{
-    enum TokenType{ Name, Number, Colon, None}
+    enum TokenType{ Name, Number, Colon, None};
 
     class Token{
         private:
@@ -23,16 +24,16 @@ namespace simpletron::assembler{
     class Lexer{
         private:
             int index;
-            utils::Character current;
+            utils::Character* current;
             std::string data;
             bool to_newline;
-            Token getNameToken();
-            Token getNumberToken();
+            simpletron::utils::Result<Token>* getNameToken();
+            simpletron::utils::Result<Token>* getNumberToken();
         public:
             Lexer(std::string data);
             char pop();
             bool hasNext();
-            Token nextToken();
+            simpletron::utils::Result<Token>* nextToken();
     };
 }
 

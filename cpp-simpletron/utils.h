@@ -12,7 +12,7 @@ namespace simpletron::utils{
             Character(char value){ this->value = value; }
             bool isAlphabetic();
             bool isNumeric();
-            bool isAlphanumeric(){ return this->isAlphabetic() || this->isNumeric() }
+            bool isAlphanumeric(){ return this->isAlphabetic() || this->isNumeric(); }
             bool isHexdigit();
             bool isWhitespace();
             char unwrap(){ return this->value; }
@@ -30,10 +30,10 @@ namespace simpletron::utils{
             bool isError(){
                 return this->message.length() > 0 && this->value == nullptr;
             }
-            T* getValue(){ return this->value; }
+            T* unwrap(){ return this->value; }
             std::string getMessage(){ return this->message; }
-            static *Result<T> Ok(T* value){ return new Result<T>(value, ""); }
-            static *Result<nullptr> Error(std::string message){ return new Result<nullptr>(nullptr, message ); }
+            static Result<T>* Ok(T* value){ return new Result<T>(value, ""); }
+            static Result<T>* Error(std::string message){ return new Result<T>(nullptr, message ); }
     };
 
     std::string hex(int value);
@@ -65,29 +65,28 @@ bool simpletron::utils::Character::isWhitespace(){
 std::string simpletron::utils::hex(int value){
     int init = value;
     std::string builder = "";
-    while init > 0{
-        let ch = std::to_string(init % 16);
-        switch(ch){
-            case "10":
+    while(init > 0){
+        switch(init % 16){
+            case 10:
                 builder += "A";
                 break;
-            case "11":
+            case 11:
                 builder += "B";
                 break;
-            case "12":
+            case 12:
                 builder += "C";
                 break;
-            case "13":
+            case 13:
                 builder += "D";
                 break;
-            case "14":
+            case 14:
                 builder += "E";
                 break;
-            case "15":
+            case 15:
                 builder += "F";
                 break;
             default:
-                builder += ch;
+                builder += std::to_string(init % 16);
         }
         init /= 16;
     }

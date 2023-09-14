@@ -1,21 +1,24 @@
 #include "lexer.h"
 
+using namespace simpletron::assembler;
+using namespace simpletron::utils;
+
 simpletron::assembler::Lexer::Lexer(std::string data){
     this->data = data;
 }
 
 char simpletron::assembler::Lexer::pop(){
-    char init = this->data[self.index];
+    char init = this->data[this->index];
     this->index += 1;
     return init;
 }
 
-bool simpletron::assembler::Lexer::hasNext(){
+bool Lexer::hasNext(){
     while(this->index < this->data.length()){
-        this->current = new Character(this->data[this->index]);
-        if(this->to_newline && this->current == '\n'){
+        this->current = new utils::Character(this->data[this->index]);
+        if(this->to_newline && this->current->unwrap() == '\n'){
             this->to_newline = false;
-        }else if(!this->to_newline && !this->current.isWhitespace()){
+        }else if(!this->to_newline && !this->current->isWhitespace()){
             return true; 
         }
         this->index += 1;
@@ -23,28 +26,45 @@ bool simpletron::assembler::Lexer::hasNext(){
     return false;
 }
 
-fn get_name_token(&mut self)->Result<Token, String>{
-    let mut builder = String::new();
-    while self.index < self.data.len(){
-        self.current = Character::new(self.data.chars().nth(self.index).unwrap());
-        let passable = !self.current.is_alphanumeric();
-        if passable { break; }else { builder.push(self.current.unwrap()); }
-        self.index += 1;
+Result<Token>* Lexer::getNameToken(){
+    std::string builder = "";
+    while(this->index < this->data.length()){
+        this->current = new Character(this->data[this->index]);
+        bool passable = !this->current->isAlphanumeric();
+        if(passable){
+            break;
+        }else {
+            builder += this->current->unwrap();
+        }
+        this->index += 1;
     }
-    return Ok(Token::Name(builder));
+    return Result<Token>::Ok(new Token(TokenType::Name, builder));
 }
 
-fn get_number_token(&mut self)->Result<Token, String>{
-    let mut builder = String::new();
-    while self.index < self.data.len(){
-        self.current = Character::new(self.data.chars().nth(self.index).unwrap());
-        let important = !self.current.is_whitespace() && self.current.is_hexdigit();
-        if important { builder.push(self.current.unwrap()); } else { break; };
-        self.index += 1;
+Result<Token>* Lexer::getNumberToken(){
+    std::string builder = "";
+    while(this->index < this->data.length()){
+        this->current = new Character(this->data[this->index]);
+        bool important = !this->current->isWhitespace() && this->current->isHexdigit();
+        if(important){
+            builder += this->current->unwrap();
+        }else{
+            break;
+        };
+        this->index += 1;
     }
-    return Ok(Token::Number(builder));
+    return Result<Token>::Ok(new Token(TokenType::Number, builder));
 }
 
-simpletron::assembler::Token simpletron::assembler::Lexer::nextToken(){
-    
+Result<Token>* Lexer::nextToken(){
+    if(this->current->isAlphabetic()){
+        return this->getNameToken();
+    }else if(this->current->isNumeric()){
+        return this->getNumberToken();
+    }else if(this->current->unwrap() == ':'){
+        this->pop();
+        return Result<Token>::Ok(new Token(TokenType::Colon, ":"));
+    }
+    std::string s(1, this->pop());
+    return Result<Token>::Error("unexpected token {" + s + "} encountered");
 }
