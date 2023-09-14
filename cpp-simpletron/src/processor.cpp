@@ -1,4 +1,4 @@
-#include "processor.h"
+#include "headers/processor.h"
 
 void simpletron::intro(){
    std::cout<<"*** Welcome to Simpletron! ***"<<std::endl;

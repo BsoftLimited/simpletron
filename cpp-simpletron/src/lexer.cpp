@@ -1,4 +1,4 @@
-#include "lexer.h"
+#include "headers/lexer.h"
 
 using namespace simpletron::assembler;
 using namespace simpletron::utils;

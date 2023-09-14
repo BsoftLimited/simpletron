@@ -7,7 +7,7 @@
 #include "utils.h"
 
 namespace simpletron::assembler{
-    enum TokenType{ Name, Number, Colon, None};
+    enum TokenType{ Name, Number, Colon, TokenNone};
 
     class Token{
         private:

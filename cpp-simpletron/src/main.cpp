@@ -1,4 +1,4 @@
-#include "processor.h"
+#include "headers/processor.h"
 
 int main(int length, char** args){
     simpletron::intro();
