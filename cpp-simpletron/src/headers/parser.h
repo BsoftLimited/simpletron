@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include <variant>
 
 #include "utils.h"
@@ -69,13 +70,14 @@ namespace simpletron::assembler{
     class Parser{
         private:
             simpletron::assembler::Lexer* lexer;
-            std::string* errors;
+            std::vector<std::string> errors;
             simpletron::assembler::Token* current;
             simpletron::assembler::Token* popToken();
-            Expression* initOpcode();
-            Expression* initBranch();
+            Expression* initOpcode(int opcode);
+            Expression* initBranch(int opcode);
             Expression* initSubroutine();
         public:
+            Parser(std::string data);
             bool nextToken();
             Expression* getNext();
     };

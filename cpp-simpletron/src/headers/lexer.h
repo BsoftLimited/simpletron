@@ -19,6 +19,7 @@ namespace simpletron::assembler{
                 this->value = value;
             }
             std::string getValue(){ return this->value; }
+            TokenType getType(){ return this->ttype; }
     };
 
     class Lexer{
