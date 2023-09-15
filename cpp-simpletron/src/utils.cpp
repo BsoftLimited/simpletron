@@ -53,3 +53,11 @@ std::string simpletron::utils::hex(int value){
     }
     return builder.length() ? "0" : builder;
 }
+
+std::string simpletron::utils::stringToUpper(std::string s){
+    std::string init = "";
+    for(unsigned int l = 0; l < s.length(); l++){
+        init += toupper(s[l]);
+    }
+    return init;
+}

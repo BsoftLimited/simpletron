@@ -1,6 +1,7 @@
 #include "headers/parser.h"
 
 using namespace simpletron::assembler;
+using namespace simpletron::utils;
 
 Parser::Parser(std::string data){
     this->lexer = new Lexer(data);
@@ -29,7 +30,14 @@ simpletron::assembler::Token* Parser::popToken(){
 }
 
 Expression* Parser::initOpcode(int opcode){
-
+    this->nextToken();
+    if(this->current->getType() == TokenType::Number){
+        int value =  std::stoi(this->current->getValue());
+        return Expression::Opcode(opcode + value);
+    }else{
+        this->errors.push_back("expected a number, instead " + this->current->getValue() + " was provided");
+    }
+    return Expression::None();
 }
 
 Expression* Parser::initBranch(int opcode){
@@ -43,29 +51,36 @@ Expression* Parser::initSubroutine(){
 Expression* Parser::getNext(){
     while(this->current->getType() != TokenType::TokenNone){
         if(this->current->getType() == TokenType::Name){
-            std::string name = this->current->getValue().;
-                match name.to_uppercase().as_str(){
-                    "RD"   => return self.init_opcode(1000),
-                    "WR"   => return self.init_opcode(1100),
-
-                    "LD"   => return self.init_opcode(2000),
-                    "STR"  => return self.init_opcode(2100),
-
-                    "ADD"  => return self.init_opcode(3000),
-                    "SUB"  => return self.init_opcode(3100),
-                    "DIV"  => return self.init_opcode(3200),
-                    "MUL"  => return self.init_opcode(3300),
-
-                    "BR"   => return self.init_branch(4000),
-                    "BRN"  => return self.init_branch(4100),
-                    "BRZ"  => return self.init_branch(4200),
-                    "HLT"  => return Expression::Opcode(4300),
-
-                    _ => return self.init_subroutine(),
-                }
+            std::string name = stringToUpper(this->current->getValue());
+            if(name.compare("RD")){
+                return this->initOpcode(1000);
+            }else if(name.compare("WR")){
+                return this->initOpcode(1100);
+            }else if(name.compare("LD")){
+                return this->initOpcode(2000);
+            }else if(name.compare("STR")){
+                return this->initOpcode(2100);
+            }else if(name.compare("ADD")){
+                return this->initOpcode(3000);
+            }else if(name.compare("SUB")){
+                return this->initOpcode(3100);
+            }else if(name.compare("DIV")){
+                return this->initOpcode(3200);
+            }else if(name.compare("MUL")){
+                return this->initOpcode(3300);
+            }else if(name.compare("BR")){
+                return this->initOpcode(4000);
+            }else if(name.compare("BRN")){
+                return this->initOpcode(4100);
+            }else if(name.compare("BRZ")){
+                return this->initOpcode(4200);
+            }else if(name.compare("HLT")){
+                return this->initOpcode(4300);
             }
-            let token = self.pop_token();
-            self.errors.push(format!("Unexpected token: {:?}", token));
+            return this->initSubroutine();
         }
-        return Expression::None;
+        Token* token = this->popToken();
+        this->errors.push_back("Unexpected token: " + token->getValue());
+    }
+    return Expression::None();
 }

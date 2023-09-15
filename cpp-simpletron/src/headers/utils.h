@@ -37,6 +37,7 @@ namespace simpletron::utils{
     };
 
     std::string hex(int value);
+    std::string stringToUpper(std::string s);
 }
 
 #endif
