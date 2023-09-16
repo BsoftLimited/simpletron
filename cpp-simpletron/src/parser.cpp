@@ -11,7 +11,7 @@ Parser::Parser(std::string data){
 
 bool Parser::nextToken(){
     while(this->lexer->hasNext()){
-        simpletron::utils::Result<simpletron::assembler::Token>* init = this->lexer->nextToken();
+        Result<Token>* init = this->lexer->nextToken();
         if(init->isError()){
             this->errors.push_back(init->getMessage());
         }else{
@@ -41,11 +41,27 @@ Expression* Parser::initOpcode(int opcode){
 }
 
 Expression* Parser::initBranch(int opcode){
-    
+    this->nextToken();
+    if(this->current->getType() == TokenType::Name){
+        std::string name = this->current->getValue();
+        if(!is_nemonic(name)){
+            return Expression::Branch(opcode, name);
+        }
+    }
+    return Expression::None();
 }
 
 Expression* Parser::initSubroutine(){
-
+    std::string name = "";
+    while(this->current->getType() != TokenType::TokenNone){
+        if(this->current->getType() == TokenType::Name){
+            name = this->current->getValue();
+        }else if(this->current->getType() == TokenType::Colon){
+            return Expression::Subroutine(name);
+        }
+        this->nextToken();
+    }
+    return Expression::None();
 }
 
 Expression* Parser::getNext(){

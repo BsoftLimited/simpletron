@@ -52,7 +52,7 @@ namespace simpletron::assembler{
             static Expression* Opcode(int value){
                 return new Expression(ExpressionType::Opcode, value);
             }
-            static Expression* Opcode(int nemode, std::string address){
+            static Expression* Branch(int nemode, std::string address){
                 BranchValue init;
                 init.nemode = nemode;
                 init.address = address;

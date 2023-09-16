@@ -3,11 +3,11 @@
 using namespace simpletron::assembler;
 using namespace simpletron::utils;
 
-simpletron::assembler::Lexer::Lexer(std::string data){
+Lexer::Lexer(std::string data){
     this->data = data;
 }
 
-char simpletron::assembler::Lexer::pop(){
+char Lexer::pop(){
     char init = this->data[this->index];
     this->index += 1;
     return init;

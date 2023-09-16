@@ -7,7 +7,7 @@
 #include "utils.h"
 
 namespace simpletron::assembler{
-    enum TokenType{ Name, Number, Colon, TokenNone};
+    enum TokenType{ Name = 0, Number, Colon, TokenNone };
 
     class Token{
         private:
@@ -20,6 +20,38 @@ namespace simpletron::assembler{
             }
             std::string getValue(){ return this->value; }
             TokenType getType(){ return this->ttype; }
+            friend std::ostream& operator<<(std::ostream& os, const Token& token){
+                std::string name = "";
+                switch(token.ttype){
+                    case TokenType::Name:
+                        name = "Name";
+                        break;
+                    case TokenType::Number:
+                        name = "Number";
+                        break;
+                    case TokenType::Colon:
+                        name = "Colon";
+                        break;
+                }
+                os << "Token:" << name << "(" << token.value << ")" ;
+                return os;
+            }
+            friend std::ostream& operator<<(std::ostream& os, const Token* token){
+                std::string name = "";
+                switch(token->ttype){
+                    case TokenType::Name:
+                        name = "Name";
+                        break;
+                    case TokenType::Number:
+                        name = "Number";
+                        break;
+                    case TokenType::Colon:
+                        name = "Colon";
+                        break;
+                }
+                os << "Token:" << name << "(" << token->value << ")" ;
+                return os;
+            }
     };
 
     class Lexer{
