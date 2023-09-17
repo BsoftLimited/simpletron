@@ -63,10 +63,10 @@ std::string simpletron::utils::stringToUpper(std::string s){
 }
 
 bool simpletron::utils::is_nemonic(std::string name){
-        std::string NEMONICS[12] = {
+        std::vector<std::string> NEMONICS = {
             "RD", "WR", "LD", "STR", "ADD", "SUB", "DIV", "MUL", "BR", "BRN", "BRZ", "HLT"
         };
-        for(int i = 0; i < sizeof(NEMONICS); i++){
+        for(int i = 0; i < NEMONICS.size(); i++){
             if(NEMONICS[i] == name){
                 return true;
             }

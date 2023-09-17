@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <variant>
+#include <map>
 
 #include "utils.h"
 #include "lexer.h"
