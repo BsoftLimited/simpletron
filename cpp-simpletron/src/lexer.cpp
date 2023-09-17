@@ -26,7 +26,7 @@ bool Lexer::hasNext(){
     return false;
 }
 
-Result<Token>* Lexer::getNameToken(){
+Result<Token*>* Lexer::getNameToken(){
     std::string builder = "";
     while(this->index < this->data.length()){
         this->current = new Character(this->data[this->index]);
@@ -38,10 +38,10 @@ Result<Token>* Lexer::getNameToken(){
         }
         this->index += 1;
     }
-    return Result<Token>::Ok(new Token(TokenType::Name, builder));
+    return Result<Token*>::Ok(new Token(TokenType::Name, builder));
 }
 
-Result<Token>* Lexer::getNumberToken(){
+Result<Token*>* Lexer::getNumberToken(){
     std::string builder = "";
     while(this->index < this->data.length()){
         this->current = new Character(this->data[this->index]);
@@ -53,18 +53,18 @@ Result<Token>* Lexer::getNumberToken(){
         };
         this->index += 1;
     }
-    return Result<Token>::Ok(new Token(TokenType::Number, builder));
+    return Result<Token*>::Ok(new Token(TokenType::Number, builder));
 }
 
-Result<Token>* Lexer::nextToken(){
+Result<Token*>* Lexer::nextToken(){
     if(this->current->isAlphabetic()){
         return this->getNameToken();
     }else if(this->current->isNumeric()){
         return this->getNumberToken();
     }else if(this->current->unwrap() == ':'){
         this->pop();
-        return Result<Token>::Ok(new Token(TokenType::Colon, ":"));
+        return Result<Token*>::Ok(new Token(TokenType::Colon, ":"));
     }
     std::string s(1, this->pop());
-    return Result<Token>::Error("unexpected token {" + s + "} encountered");
+    return Result<Token*>::Error("unexpected token {" + s + "} encountered");
 }

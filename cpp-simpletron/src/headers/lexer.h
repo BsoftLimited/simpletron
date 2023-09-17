@@ -60,13 +60,13 @@ namespace simpletron::assembler{
             utils::Character* current;
             std::string data;
             bool to_newline;
-            simpletron::utils::Result<Token>* getNameToken();
-            simpletron::utils::Result<Token>* getNumberToken();
+            simpletron::utils::Result<Token*>* getNameToken();
+            simpletron::utils::Result<Token*>* getNumberToken();
         public:
             Lexer(std::string data);
             char pop();
             bool hasNext();
-            simpletron::utils::Result<Token>* nextToken();
+            simpletron::utils::Result<Token*>* nextToken();
     };
 }
 

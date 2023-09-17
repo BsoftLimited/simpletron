@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
+#include <filesystem>
 
 namespace simpletron::utils{
     class Character{
@@ -21,25 +23,26 @@ namespace simpletron::utils{
 
     template <typename T> class Result{
         private:
-            T* value;
+            T value;
             std::string message;
-            Result(T* value, std::string message){
+            Result(T value, std::string message){
                 this->value = value;
                 this->message = message;
             }
         public:
             bool isError(){
-                return this->message.length() > 0 && this->value == nullptr;
+                return this->message.length() > 0;
             }
-            T* unwrap(){ return this->value; }
+            T unwrap(){ return this->value; }
             std::string getMessage(){ return this->message; }
-            static Result<T>* Ok(T* value){ return new Result<T>(value, ""); }
+            static Result<T>* Ok(T value){ return new Result<T>(value, ""); }
             static Result<T>* Error(std::string message){ return new Result<T>(nullptr, message ); }
     };
 
     std::string hex(int value);
     std::string stringToUpper(std::string s);
     bool is_nemonic(std::string name);
+    Result<std::string>* readFile(std::string path);
 }
 
 #endif

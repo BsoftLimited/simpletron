@@ -1,0 +1,1 @@
+start: LD 43 BRZ main RD 12 main: STR 32 BRN start

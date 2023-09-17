@@ -63,13 +63,31 @@ std::string simpletron::utils::stringToUpper(std::string s){
 }
 
 bool simpletron::utils::is_nemonic(std::string name){
-        std::vector<std::string> NEMONICS = {
-            "RD", "WR", "LD", "STR", "ADD", "SUB", "DIV", "MUL", "BR", "BRN", "BRZ", "HLT"
-        };
-        for(int i = 0; i < NEMONICS.size(); i++){
-            if(NEMONICS[i] == name){
-                return true;
-            }
+    std::vector<std::string> NEMONICS = {
+        "RD", "WR", "LD", "STR", "ADD", "SUB", "DIV", "MUL", "BR", "BRN", "BRZ", "HLT"
+    };
+    for(int i = 0; i < NEMONICS.size(); i++){
+        if(NEMONICS[i] == name){
+            return true;
         }
-        return false;
     }
+    return false;
+}
+
+simpletron::utils::Result<std::string>* simpletron::utils::readFile(std::string path){
+    std::ifstream file;
+    std::string line;
+    
+    file.open(path);
+    if (file.is_open() ) {
+        std::string content = "";
+        while (std::getline (file, line)) {
+            content += (content.length() > 0 ? "\n" : "") + line;
+        }
+        file.close();
+        return simpletron::utils::Result<std::string>::Ok(content);
+    }
+
+    std::string absolutePath = std::filesystem::absolute(path);
+    return simpletron::utils::Result<std::string>::Error("Couldn't open file: " + absolutePath);
+}

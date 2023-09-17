@@ -11,7 +11,7 @@ Parser::Parser(std::string data){
 
 bool Parser::hasNext(){
     while(this->lexer->hasNext()){
-        Result<Token>* init = this->lexer->nextToken();
+        Result<Token*>* init = this->lexer->nextToken();
         if(init->isError()){
             this->errors.push_back(init->getMessage());
         }else{

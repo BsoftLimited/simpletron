@@ -100,6 +100,12 @@ namespace simpletron::assembler{
             Parser(std::string data);
             bool hasNext();
             Expression* getNext();
+            bool hasErrors(){ return this->errors.size() > 0; }
+            void showErrors(){
+                for(std::string error: this->errors){
+                    std::cout<<error<<std::endl;
+                }
+            }
     };
 }
 

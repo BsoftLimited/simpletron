@@ -25,12 +25,29 @@ int main(int length, char** args){
         }
     }*/
 
-    simpletron::assembler::Assembler* assembler = new simpletron::assembler::Assembler();
+    /*simpletron::assembler::Assembler* assembler = new simpletron::assembler::Assembler();
     assembler->init("start: LD 43 BRZ main RD 12 main: STR 32 BRN start");
 
     std::vector<int> init = assembler->run();
     for(int code: init){
         std::cout<<code<<std::endl;
+    }*/
+
+    simpletron::utils::Result<std::string>* init = simpletron::utils::readFile("./test.asm");
+    if(init->isError()){
+        std::cout<<init->getMessage()<<std::endl;
+    }else{
+        std::string content = init->unwrap();
+        
+        simpletron::assembler::Lexer* lexer = new simpletron::assembler::Lexer("start: LD 43 BRZ main RD 12 main: STR 32 BRN start");
+        while(lexer->hasNext()){
+            simpletron::utils::Result<simpletron::assembler::Token*>* init = lexer->nextToken();
+            if(init->isError()){
+                std::cout<<init->getMessage()<<std::endl;
+            }else{
+                std::cout<<init->unwrap()<<std::endl;
+            }
+        }
     }
 
     return 0;
