@@ -1,5 +1,5 @@
 #include "headers/processor.h"
-#include "headers/lexer.h"
+#include "headers/parser.h"
 
 int main(int length, char** args){
     /*simpletron::intro();
@@ -8,14 +8,12 @@ int main(int length, char** args){
     processor.load();
     processor.run();*/
 
-    simpletron::assembler::Lexer lexer("LD 43");
-    while(lexer.hasNext()){
-        simpletron::utils::Result<simpletron::assembler::Token>* init = lexer.nextToken();
-        if(init->isError()){
-            std::cout<<init->getMessage();
-        }else{
-            std::cout<<init->unwrap()<<std::endl;
-        }
+    simpletron::assembler::Parser* parser = new simpletron::assembler::Parser("start: LD 43 RD 12 main: BRN start");
+    while(parser->hasNext()){
+        simpletron::assembler::Expression* init = parser->getNext();
+        
+        std::cout<<init<<std::endl;
     }
+
     return 0;
 }

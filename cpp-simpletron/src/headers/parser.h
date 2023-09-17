@@ -11,24 +11,11 @@
 #include "parser.h"
 
 namespace simpletron::assembler{
-    std::string NEMONICS[12] = {
-        "RD", "WR", "LD", "STR", "ADD", "SUB", "DIV", "MUL", "BR", "BRN", "BRZ", "HLT"
-    };
-
-    enum ExpressionType{ Opcode, Branch,  Subroutine, ExpressionNone };
+    enum ExpressionType{ OpcodeExpression, BranchExpression,  SubroutineExpression, NoneExpression };
     
     struct BranchValue{
         int nemode;
         std::string address;
-    };
-
-    bool is_nemonic(std::string name){
-        for(int i = 0; i < sizeof(NEMONICS); i++){
-            if(NEMONICS[i] == name){
-                return true;
-            }
-        }
-        return false;
     };
 
     class Expression{
@@ -40,6 +27,9 @@ namespace simpletron::assembler{
                 this->value = value;
             }
         public:
+            ExpressionType getType(){
+                return this->exType;
+            }
             int getInt(){
                 return std::get<int>(this->value);
             }
@@ -50,20 +40,49 @@ namespace simpletron::assembler{
                 return std::get<BranchValue>(this->value);
             }
             static Expression* Opcode(int value){
-                return new Expression(ExpressionType::Opcode, value);
+                return new Expression(ExpressionType::OpcodeExpression, value);
             }
             static Expression* Branch(int nemode, std::string address){
                 BranchValue init;
                 init.nemode = nemode;
                 init.address = address;
 
-                return new Expression(ExpressionType::Branch, init);
+                return new Expression(ExpressionType::BranchExpression, init);
             }
             static Expression* Subroutine(std::string value){
-                return new Expression(ExpressionType::Subroutine, value);
+                return new Expression(ExpressionType::SubroutineExpression, value);
             }
             static Expression* None(){
-                return new Expression(ExpressionType::ExpressionNone, nullptr);
+                return new Expression(ExpressionType::NoneExpression, nullptr);
+            }
+            friend std::ostream& operator<<(std::ostream& os, const Expression* exp){
+                std::string name = "";
+                switch(exp->exType){
+                    case ExpressionType::OpcodeExpression:
+                        name = "Opcode";
+                        break;
+                    case ExpressionType::BranchExpression:
+                        name = "Branch";
+                        break;
+                    case ExpressionType::SubroutineExpression:
+                        name = "SubroutineExpression";
+                        break;
+                    case ExpressionType::NoneExpression:
+                        name = "None";
+                        break;
+                }
+
+                std::string value = "";
+                if (std::holds_alternative<std::string>(exp->value)) {
+                    value = std::get<std::string>(exp->value);
+                }else if (std::holds_alternative<int>(exp->value)) {
+                    value = std::to_string(std::get<int>(exp->value));
+                }else if (std::holds_alternative<BranchValue>(exp->value)) {
+                    BranchValue init = std::get<BranchValue>(exp->value);
+                    value = "nemode:" + std::to_string(init.nemode) + ", address:" + init.address;
+                }
+                os << "Expression:" << name << "(" << value << ")" ;
+                return os;
             }
     };
 
@@ -78,7 +97,7 @@ namespace simpletron::assembler{
             Expression* initSubroutine();
         public:
             Parser(std::string data);
-            bool nextToken();
+            bool hasNext();
             Expression* getNext();
     };
 }

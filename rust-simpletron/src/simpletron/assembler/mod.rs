@@ -1,23 +1,21 @@
 mod lexer;
-use self::lexer::{Lexer, Token};
+use self::lexer::{ Lexer, Token };
 
 mod parser;
-use self::parser::{Expression, Parser};
+use self::parser::{ Expression, Parser };
 
 use std::collections::HashMap;
 
-struct Sub{ name: String }
-
-pub struct Assemblier{ map: Vec<(String,  Vec<Expression>)> }
+pub struct Assemblier{ subroutines: Vec<(String,  Vec<Expression>)> }
 impl Assemblier{
     pub fn new()->Self{
-        Assemblier{ map: Vec::new() }
+        Assemblier{ subroutines: Vec::new() }
     }
 
     pub fn init(&mut self, data: &str){
         let mut parser = Parser::new(data);
 
-        let mut sub: Option<Sub> = None;
+        let mut sub: Option<String> = None;
         let mut codes: Vec<Expression> = Vec::new();
 
         while parser.next_token(){
@@ -26,15 +24,15 @@ impl Assemblier{
                 codes.push(init);
             }else if let Expression::Subroutine{name} = init{
                 self.insert(&mut sub, &mut codes);
-                sub = Some(Sub{name});
+                sub = Some(name);
             }
         }
         self.insert(&mut sub, &mut codes);
     }
 
-    fn insert(&mut self, sub: &mut Option<Sub>, codes: &mut Vec<Expression>){
+    fn insert(&mut self, sub: &mut Option<String>, codes: &mut Vec<Expression>){
         if sub.is_some() && !codes.is_empty(){
-            self.map.push((sub.as_ref().unwrap().name.clone(),  codes.to_vec()));
+            self.subroutines.push((sub.as_ref().unwrap().clone(),  codes.to_vec()));
             codes.clear();
         }
     }
@@ -44,13 +42,13 @@ impl Assemblier{
         let mut addresses: HashMap<String, u16> = HashMap::new();
 
         let mut current: u16 = 0000;
-        for subroutine in &self.map{
+        for subroutine in &self.subroutines{
             addresses.insert(subroutine.0.clone(), current);
             
             current += subroutine.1.len() as u16;
         }
 
-        for subroutine in &self.map{
+        for subroutine in &self.subroutines{
             for exp in subroutine.1.clone(){
                 if let Expression::Opcode(code) = exp{
                     codes.push(code.clone() as u32);
