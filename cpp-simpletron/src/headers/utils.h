@@ -21,22 +21,33 @@ namespace simpletron::utils{
             char unwrap(){ return this->value; }
     };
 
+    template <typename T> struct ResultValue{
+        T value;
+        std::string message;
+    };
+
     template <typename T> class Result{
         private:
-            T value;
-            std::string message;
-            Result(T value, std::string message){
+            ResultValue<T> value;
+            Result(ResultValue<T> value){
                 this->value = value;
-                this->message = message;
             }
         public:
             bool isError(){
-                return this->message.length() > 0;
+                return this->value.message.length() > 0;
             }
-            T unwrap(){ return this->value; }
-            std::string getMessage(){ return this->message; }
-            static Result<T>* Ok(T value){ return new Result<T>(value, ""); }
-            static Result<T>* Error(std::string message){ return new Result<T>(nullptr, message ); }
+            T unwrap(){ return this->value.value; }
+            std::string getMessage(){ return this->value.message; }
+            static Result<T>* Ok(T value){
+                ResultValue<T> init;
+                init.value = value;
+                return new Result<T>(init);
+            }
+            static Result<T>* Error(std::string message){
+                ResultValue<T> init;
+                init.message = message;
+                return new Result<T>(init); 
+            }
     };
 
     std::string hex(int value);

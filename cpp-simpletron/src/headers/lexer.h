@@ -56,7 +56,7 @@ namespace simpletron::assembler{
 
     class Lexer{
         private:
-            int index;
+            int index = 0;
             utils::Character* current;
             std::string data;
             bool to_newline;
