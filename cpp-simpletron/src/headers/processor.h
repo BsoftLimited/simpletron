@@ -39,6 +39,8 @@ namespace simpletron{
     };
 
     void intro();
+    void info();
+    void version();
 }
 
 #endif
