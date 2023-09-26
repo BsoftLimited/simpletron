@@ -2,6 +2,7 @@
 	#define CPU
 
 #include <iostream>
+#include <vector>
 
 namespace simpletron{
     enum Operands{

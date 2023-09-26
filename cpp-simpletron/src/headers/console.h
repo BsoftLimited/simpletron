@@ -8,7 +8,7 @@
 #include "utils.h"
 #include "processor.h"
 
-namespace simpletron::assembler{
+namespace simpletron{
     class Console{
         private:
             Processor* processor;

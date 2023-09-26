@@ -28,7 +28,7 @@ simpletron::Console::Console(){
 }
 
 void simpletron::Console::load(std::string data){
-
+    
 }
 
 void simpletron::Console::read(){

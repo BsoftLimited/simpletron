@@ -23,7 +23,7 @@ namespace simpletron::assembler{
             Assembler(){
                 this->subroutines = {};
             }
-            void init(std::string data);
+            bool init(std::string data);
             std::vector<int> run();
     };
 }

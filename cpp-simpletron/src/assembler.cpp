@@ -2,7 +2,7 @@
 
 using namespace simpletron::assembler;
 
-void Assembler::init(std::string data){
+bool Assembler::init(std::string data){
     Parser* parser = new Parser(data);
 
     std::string sub = "";
@@ -13,17 +13,26 @@ void Assembler::init(std::string data){
             this->insert(sub, codes);
             sub = init->getString();
             codes.clear();
-        }else{
+        }else if(!parser->hasErrors()){
             codes.push_back(*init);
+        }else{
+            return false;
         }
     }
     this->insert(sub, codes);
+    return true;
 }
 
 void Assembler::insert(std::string sub, std::vector<Expression> codes){
     if(sub.length() > 0 && codes.size() > 0){
         Subroutine init = {};
         init.name = sub;
+        init.exps = codes;
+
+        this->subroutines.push_back(init);
+    }else if(this->subroutines.empty() && codes.size() > 0){
+        Subroutine init = {};
+        init.name = "_start";
         init.exps = codes;
 
         this->subroutines.push_back(init);

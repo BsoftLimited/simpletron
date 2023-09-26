@@ -12,7 +12,7 @@ impl Assemblier{
         Assemblier{ subroutines: Vec::new() }
     }
 
-    pub fn init(&mut self, data: &str){
+    pub fn init(&mut self, data: &str)->bool{
         let mut parser = Parser::new(data);
 
         let mut sub: Option<String> = None;
@@ -20,6 +20,9 @@ impl Assemblier{
 
         while parser.next_token(){
             let init = parser.get_next();
+            if(parser.has_error()){
+                return false;
+            }
             if (matches!(init, Expression::Branch{ nemode:_ , address:_ }) || matches!(init, Expression::Opcode(_))) && sub.is_some(){
                 codes.push(init);
             }else if let Expression::Subroutine{name} = init{
@@ -28,11 +31,15 @@ impl Assemblier{
             }
         }
         self.insert(&mut sub, &mut codes);
+        return true;
     }
 
     fn insert(&mut self, sub: &mut Option<String>, codes: &mut Vec<Expression>){
         if sub.is_some() && !codes.is_empty(){
             self.subroutines.push((sub.as_ref().unwrap().clone(),  codes.to_vec()));
+            codes.clear();
+        }else !codes.is_empty() && self.subroutines.is_empty(){
+            self.subroutines.push(( String::from("_start") ,  codes.to_vec()));
             codes.clear();
         }
     }

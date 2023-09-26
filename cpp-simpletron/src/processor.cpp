@@ -11,7 +11,7 @@ void simpletron::Processor::add(std::vector<int> codes){
     }
 }
 
-void simpletron::Processor::clear(std::vector<int> codes){
+void simpletron::Processor::clear(){
     for(int i = 0; i < SIZE; i++){
         this->memory[i] = 0;
     }
@@ -97,11 +97,6 @@ void simpletron::Processor::run(){
             case simpletron::Operands::BRANCHZERO:
                 if (this->accumulator == 0)
                     this->instructionCounter = this->operand;
-                break;
-
-            case simpletron::Operands::HALT:
-                std::cout<<"Program Halted"<<std::endl;
-                e = 100;
                 break;
 
             default:

@@ -47,6 +47,9 @@ Expression* Parser::initBranch(int opcode){
         if(!is_nemonic(name)){
             return Expression::Branch(opcode, name);
         }
+    }else if(this->current->getType() == TokenType::Number){
+        int value =  std::stoi(this->current->getValue());
+        return Expression::Opcode(opcode + value);
     }
     return Expression::None();
 }
