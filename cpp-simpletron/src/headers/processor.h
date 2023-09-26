@@ -32,15 +32,14 @@ namespace simpletron{
             int instructionRegister; // The current instruction to be performed
             int operationCode; // The operation code currently being perfromed
             int operand; // The memory address the current variable operates
+            int address;
         public:
             Processor();
-            void load();
+            void add(std::vector<int> codes);
             void run();
+            int currentAddress();
+            void clear();
     };
-
-    void intro();
-    void info();
-    void version();
 }
 
 #endif

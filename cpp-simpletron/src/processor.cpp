@@ -1,29 +1,17 @@
 #include "headers/processor.h"
 
-void simpletron::intro(){
-   std::cout<<"*** Welcome to Simpletron! ***"<<std::endl;
-   std::cout<<"*** Please enter your program one instruction ***"<<std::endl;
-   std::cout<<"*** (or data word) at a time. I will type the ***"<<std::endl;
-   std::cout<<"*** location number and a question mark (?).  ***"<<std::endl;
-   std::cout<<"*** You then type the word for that location. ***"<<std::endl;
-   std::cout<<"*** Type the end to stop inputing code***"<<std::endl;
-   std::cout<<"*** your program. ***"<<std::endl;
-}
-
-void simpletron::info(){
-   std::cout<<"*** Welcome to Simpletron! ***"<<std::endl;
-   std::cout<<"To run:"<<std::endl;
-   std::cout<<"\tSingletron --help or -h: to display help options"<<std::endl;
-   std::cout<<"\tSingletron file: to run from a file"<<std::endl;
-   std::cout<<"\tSingletron --version or -v: to display version"<<std::endl;
-   std::cout<<"\tSingletron: to input singletron commands manually"<<std::endl;
-}
-
-void simpletron::version(){
-    std::cout<<"Simpletron version 0.1.0"<<std::endl;
-}
-
 simpletron::Processor::Processor(){
+    this->clear();
+}
+
+void simpletron::Processor::add(std::vector<int> codes){
+    for(int code: codes){
+        this->memory[this->address] = code;
+        this->address += 1;
+    }
+}
+
+void simpletron::Processor::clear(std::vector<int> codes){
     for(int i = 0; i < SIZE; i++){
         this->memory[i] = 0;
     }
@@ -33,26 +21,13 @@ simpletron::Processor::Processor(){
     this->instructionRegister = 0;
     this->operationCode = 0;
     this->operand = 0;
-}
-
-void simpletron::Processor::load(){
-    int inp = 0;
-    int n = 0;
-    // loading program
-    while (inp != -9999){
-        std::cout<<n<<std::endl;
-        std::cin>>inp;
-        this->memory[n] = inp;
-        ++n;
-    }
-    printf("*** Program loading completed ***\n");
-    printf("*** Program execution begins  ***\n");
+    this->address = 0;
 }
 
 void simpletron::Processor::run(){
+    this->instructionCounter = 0;
     // Run infinte loop through the instructions
-    int e = 0;
-    while (e != 100){   
+    for(int i = 0; i < this->address; i++){   
         // get current instruction
         this->instructionRegister = this->memory[this->instructionCounter];
 
