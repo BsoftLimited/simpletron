@@ -1,5 +1,7 @@
 #include "headers/processor.h"
 
+using namespace simpletron::utils;
+
 simpletron::Processor::Processor(){
     this->clear();
 }
@@ -18,10 +20,14 @@ void simpletron::Processor::clear(){
 
     this->accumulator = 0;
     this->instructionCounter = 0;
-    this->instructionRegister = 0;
+    (this->instructionRegister) = 0;
     this->operationCode = 0;
     this->operand = 0;
     this->address = 0;
+}
+
+int simpletron::Processor::currentAddress(){
+    return this->address;
 }
 
 void simpletron::Processor::run(){
@@ -32,60 +38,62 @@ void simpletron::Processor::run(){
         this->instructionRegister = this->memory[this->instructionCounter];
 
         // get opcode and this->operand
-        this->operationCode = this->instructionRegister / 100;
-        this->operand = this->instructionRegister % 100;
+        this->operationCode = (this->instructionRegister) / 100;
+        this->operand = (this->instructionRegister) % 100;
         
         switch (this->operationCode){
             case simpletron::Operands::READ:
-                std::cout<<"? "<<std::endl;
+                std::cout<<"Enter an input to be stored at mempry address "<<format(this->operand, 2)<<"? ";
                 std::cin>>this->memory[ this->operand ];
-                std::cout<<this->memory[ this->operand ]<<" loaded into memory address: "<<this->operand<<std::endl;
+                std::cout<<std::endl;
+
+                std::cout<<"address "<<format(this->instructionCounter, 2)<<":"<<this->instructionRegister<<" >> "<<this->memory[ this->operand ]<<" loaded into memory address: "<<this->operand<<std::endl;
                 ++this->instructionCounter;
                 break;
             
             case simpletron::Operands::WRITE:
-                std::cout<<"? "<<this->memory[ this->operand ]<<" from memory address: "<<this->operand<<std::endl;
+                std::cout<<"address "<<format(this->instructionCounter, 2)<<":"<<this->instructionRegister<<" >> "<<this->memory[ this->operand ]<<" from memory address: "<<this->operand<<std::endl;
                 ++this->instructionCounter;
                 break;
             
             case simpletron::Operands::LOAD:
-                std::cout<<"Loaded "<<this->memory[ this->operand ]<<" into the accumulator."<<std::endl;
+                std::cout<<"address "<<format(this->instructionCounter, 2)<<":"<<this->instructionRegister<<" >> "<<"Loaded "<<this->memory[ this->operand ]<<" into the accumulator."<<std::endl;
                 this->accumulator = this->memory[ this->operand ];
                 ++this->instructionCounter;
                 break;
             
             case simpletron::Operands::STORE:
-                std::cout<<"Copied "<<this->accumulator<<">>>> from the accumulator into memory address "<<this->operand<<std::endl;
+                std::cout<<"address "<<format(this->instructionCounter, 2)<<":"<<this->instructionRegister<<" >> "<<"Copied "<<this->accumulator<<">>>> from the accumulator into memory address "<<this->operand<<std::endl;
                 this->memory[ this->operand ] = this->accumulator;
                 ++this->instructionCounter;
                 break;
             
             case simpletron::Operands::ADD:
-                std::cout<<"Add "<<this->memory[ this->operand ]<<" to the acummulator's value: "<<this->accumulator<<std::endl;                
+                std::cout<<"address "<<format(this->instructionCounter, 2)<<":"<<this->instructionRegister<<" >> "<<"Add "<<this->memory[ this->operand ]<<" to the acummulator's value: "<<this->accumulator<<std::endl;                
                 this->accumulator += this->memory[ this->operand ];
                 ++this->instructionCounter;
                 break;
             
             case simpletron::Operands::SUBSTRACT:
-                std::cout<<"Substract "<<this->memory[ this->operand ]<<" from the acummulator's value: "<<this->accumulator<<std::endl;                             
+                std::cout<<"address "<<format(this->instructionCounter, 2)<<":"<<this->instructionRegister<<" >> "<<"Substract "<<this->memory[ this->operand ]<<" from the acummulator's value: "<<this->accumulator<<std::endl;                             
                 this->accumulator -= this->memory[ this->operand ];
                 ++this->instructionCounter;
                 break;
 
             case simpletron::Operands::DIVIDE:
-                std::cout<<"Divide the acummulator's value: "<<this->accumulator<<" with "<<this->memory[ this->operand ]<<std::endl; 
+                std::cout<<"address "<<format(this->instructionCounter, 2)<<":"<<this->instructionRegister<<" >> "<<"Divide the acummulator's value: "<<this->accumulator<<" with "<<this->memory[ this->operand ]<<std::endl; 
                 this->accumulator /= this->memory[ this->operand ];
                 ++this->instructionCounter;
                 break;
 
             case simpletron::Operands::MULTIPLY:
-                std::cout<<"Multiply the accumulator's value: "<<this->accumulator<<" with "<<this->memory[ this->operand ]<<std::endl;
+                std::cout<<"address "<<format(this->instructionCounter, 2)<<":"<<this->instructionRegister<<" >> "<<"Multiply the accumulator's value: "<<this->accumulator<<" with "<<this->memory[ this->operand ]<<std::endl;
                 this->accumulator *= this->memory[ this->operand ];
                 ++this->instructionCounter;
                 break;
             
             case simpletron::Operands::BRANCH:
-                std::cout<<"Performed Jump to: "<<this->operand<<std::endl;
+                std::cout<<"address "<<format(this->instructionCounter, 2)<<":"<<this->instructionRegister<<" >> "<<"Performed Jump to: "<<this->operand<<std::endl;
                 this->instructionCounter = this->operand;
                 break;
             

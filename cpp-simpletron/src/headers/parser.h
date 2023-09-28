@@ -12,7 +12,7 @@
 #include "parser.h"
 
 namespace simpletron::assembler{
-    enum ExpressionType{ OpcodeExpression, BranchExpression,  SubroutineExpression, NoneExpression };
+    enum ExpressionType{ OpcodeExpression, BranchExpression,  SubroutineExpression };
     
     struct BranchValue{
         int nemode;
@@ -53,9 +53,6 @@ namespace simpletron::assembler{
             static Expression* Subroutine(std::string value){
                 return new Expression(ExpressionType::SubroutineExpression, value);
             }
-            static Expression* None(){
-                return new Expression(ExpressionType::NoneExpression, nullptr);
-            }
             friend std::ostream& operator<<(std::ostream& os, const Expression* exp){
                 std::string name = "";
                 switch(exp->exType){
@@ -67,9 +64,6 @@ namespace simpletron::assembler{
                         break;
                     case ExpressionType::SubroutineExpression:
                         name = "SubroutineExpression";
-                        break;
-                    case ExpressionType::NoneExpression:
-                        name = "None";
                         break;
                 }
 
@@ -90,22 +84,15 @@ namespace simpletron::assembler{
     class Parser{
         private:
             simpletron::assembler::Lexer* lexer;
-            std::vector<std::string> errors;
             simpletron::assembler::Token* current;
             simpletron::assembler::Token* popToken();
-            Expression* initOpcode(int opcode);
-            Expression* initBranch(int opcode);
-            Expression* initSubroutine();
+            simpletron::utils::Result<Expression*>* initOpcode(int opcode);
+            simpletron::utils::Result<Expression*>* initBranch(int opcode);
+            simpletron::utils::Result<Expression*>* initSubroutine();
         public:
             Parser(std::string data);
             bool hasNext();
-            Expression* getNext();
-            bool hasErrors(){ return this->errors.size() > 0; }
-            void showErrors(){
-                for(std::string error: this->errors){
-                    std::cout<<error<<std::endl;
-                }
-            }
+            simpletron::utils::Result<Expression*>* getNext();
     };
 }
 

@@ -54,6 +54,7 @@ namespace simpletron::utils{
     std::string stringToUpper(std::string s);
     bool is_nemonic(std::string name);
     Result<std::string>* readFile(std::string path);
+    std::string format(int value, int count);
 }
 
 #endif

@@ -1,21 +1,27 @@
 #include "headers/assembler.h"
 
+using namespace simpletron::utils;
 using namespace simpletron::assembler;
 
 bool Assembler::init(std::string data){
+    this->subroutines.clear();
     Parser* parser = new Parser(data);
 
     std::string sub = "";
     std::vector<Expression> codes = {};
     while(parser->hasNext()){
-        Expression* init = parser->getNext();
-        if(init->getType() == ExpressionType::SubroutineExpression){
-            this->insert(sub, codes);
-            sub = init->getString();
-            codes.clear();
-        }else if(!parser->hasErrors()){
-            codes.push_back(*init);
+        Result<Expression*>* result = parser->getNext();
+        if(!result->isError()){
+            Expression* init = result->unwrap();
+            if(init->getType() == ExpressionType::SubroutineExpression){
+                this->insert(sub, codes);
+                sub = init->getString();
+                codes.clear();
+            }else{
+                codes.push_back(*init);
+            }
         }else{
+            std::cout<<result->getMessage()<<std::endl;
             return false;
         }
     }

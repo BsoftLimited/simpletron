@@ -91,3 +91,12 @@ simpletron::utils::Result<std::string>* simpletron::utils::readFile(std::string 
     std::string absolutePath = std::filesystem::absolute(path);
     return simpletron::utils::Result<std::string>::Error("Couldn't open file: " + absolutePath);
 }
+
+std::string simpletron::utils::format(int value, int count){
+    std::string init = std::to_string(value);
+    while(init.length() < count){
+        init = "0" + init;
+    }
+
+    return init;
+}

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include "utils.h"
 
 namespace simpletron{
     enum Operands{

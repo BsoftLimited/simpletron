@@ -5,7 +5,6 @@ using namespace simpletron::utils;
 
 Parser::Parser(std::string data){
     this->lexer = new Lexer(data);
-    this->errors = {};
     this->current = new Token(TokenType::TokenNone, "");
 }
 
@@ -13,7 +12,7 @@ bool Parser::hasNext(){
     while(this->lexer->hasNext()){
         Result<Token*>* init = this->lexer->nextToken();
         if(init->isError()){
-            this->errors.push_back(init->getMessage());
+            std::cout<<init->getMessage()<<std::endl;
         }else{
             this->current = init->unwrap();
             return true;
@@ -29,48 +28,46 @@ simpletron::assembler::Token* Parser::popToken(){
     return init;
 }
 
-Expression* Parser::initOpcode(int opcode){
+simpletron::utils::Result<Expression*>* Parser::initOpcode(int opcode){
     this->hasNext();
     if(this->current->getType() == TokenType::Number){
         int value =  std::stoi(this->current->getValue());
-        return Expression::Opcode(opcode + value);
-    }else{
-        this->errors.push_back("expected a number, instead " + this->current->getValue() + " was provided");
+        return Result<Expression*>::Ok(Expression::Opcode(opcode + value));
     }
-    return Expression::None();
+    return Result<Expression*>::Error("expected a number, instead " + this->current->getValue() + " was provided");
 }
 
-Expression* Parser::initBranch(int opcode){
+simpletron::utils::Result<Expression*>* Parser::initBranch(int opcode){
     this->hasNext();
     if(this->current->getType() == TokenType::Name){
         std::string name = this->current->getValue();
         if(!is_nemonic(name)){
-            return Expression::Branch(opcode, name);
+            return Result<Expression*>::Ok(Expression::Branch(opcode, name));
         }
     }else if(this->current->getType() == TokenType::Number){
         int value =  std::stoi(this->current->getValue());
-        return Expression::Opcode(opcode + value);
+        return Result<Expression*>::Ok(Expression::Opcode(opcode + value));
     }
-    return Expression::None();
+    return Result<Expression*>::Error("Unexpected token: " + this->current->getValue() + ", expecting a subruitine name or memory address");
 }
 
-Expression* Parser::initSubroutine(){
+simpletron::utils::Result<Expression*>* Parser::initSubroutine(){
     std::string name = "";
     while(this->current->getType() != TokenType::TokenNone){
         if(this->current->getType() == TokenType::Name){
             name = this->current->getValue();
         }else if(this->current->getType() == TokenType::Colon){
-            return Expression::Subroutine(name);
+            return Result<Expression*>::Ok(Expression::Subroutine(name));
         }
         this->hasNext();
     }
-    return Expression::None();
+    return Result<Expression*>::Error("expected a Colon(:) token after " + name);
 }
 
-Expression* Parser::getNext(){
+simpletron::utils::Result<Expression*>* Parser::getNext(){
     while(this->current->getType() != TokenType::TokenNone){
+        std::string name = stringToUpper(this->current->getValue());
         if(this->current->getType() == TokenType::Name){
-            std::string name = stringToUpper(this->current->getValue());
             if(name == "RD"){
                 return this->initOpcode(1000);
             }else if(name == "WR"){
@@ -98,8 +95,7 @@ Expression* Parser::getNext(){
             }
             return this->initSubroutine();
         }
-        Token* token = this->popToken();
-        this->errors.push_back("Unexpected token: " + token->getValue());
+        return Result<Expression*>::Error("Unexpected token: " + this->current->getValue());
     }
-    return Expression::None();
+    return Result<Expression*>::Error("Unexpected end of tiokens");
 }

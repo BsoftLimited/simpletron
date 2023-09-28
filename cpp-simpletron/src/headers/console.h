@@ -7,6 +7,7 @@
 
 #include "utils.h"
 #include "processor.h"
+#include "assembler.h"
 
 namespace simpletron{
     class Console{

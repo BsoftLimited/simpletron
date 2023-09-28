@@ -1,5 +1,13 @@
 #include "headers/console.h"
 
+std::string combine(std::vector<std::string> inputs){
+    std::string init = "";
+    for(std::string datum : inputs){
+        init += " " + datum;
+    }
+    return init;
+}
+
 void simpletron::intro(){
    std::cout<<"*** Welcome to Simpletron! ***"<<std::endl;
    std::cout<<"*** Please enter your program one instruction ***"<<std::endl;
@@ -28,20 +36,43 @@ simpletron::Console::Console(){
 }
 
 void simpletron::Console::load(std::string data){
-    
+    simpletron::utils::Result<std::string>* file = simpletron::utils::readFile(data);
+    if(file->isError()){
+        std::cout<<file->getMessage()<<std::endl;
+    }else{
+        std::string content = file->unwrap();
+        
+        simpletron::assembler::Assembler* assembler = new simpletron::assembler::Assembler();
+        assembler->init(content);
+
+        this->processor->add(assembler->run());
+        printf("*** Program loading completed ***\n");
+    }
 }
 
 void simpletron::Console::read(){
-    while (inp != -9999){
-        std::cout<<n<<std::endl;
-        std::cin>>inp;
-        this->memory[n] = inp;
-        ++n;
+    simpletron::assembler::Assembler assembler;
+    std::vector<std::string> inputs;
+
+    std::string input;
+    while (input != "end"){
+        std::cout<<"address "<<simpletron::utils::format(inputs.size(), 4)<<": >> ";
+        std::getline(std::cin, input);
+        if(input != "end"){
+            std::string temp_data = combine(inputs) + " " + input;
+            if(assembler.init(temp_data)){
+                inputs.push_back(input);
+            }
+        }
     }
-    printf("*** Program loading completed ***\n");
-    printf("*** Program execution begins  ***\n");
+
+    if(input.length() > 0){
+        this->processor->add(assembler.run());
+        printf("*** Program loading completed ***\n");
+    }
 }
 
 void simpletron::Console::run(){
-    
+   printf("\n\n*** Program execution begins  ***\n");
+   this->processor->run();   
 }
