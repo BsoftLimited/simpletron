@@ -33,6 +33,8 @@ void simpletron::version(){
 
 simpletron::Console::Console(){
     this->processor = new simpletron::Processor();
+    bool is_shell = IS_SHELL;
+    system(is_shell ? "cls" : "clear");
 }
 
 void simpletron::Console::load(std::string data){
