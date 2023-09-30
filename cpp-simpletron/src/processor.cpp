@@ -7,9 +7,8 @@ simpletron::Processor::Processor(){
 }
 
 void simpletron::Processor::add(std::vector<int> codes){
-    for(int code: codes){
-        this->memory[this->address] = code;
-        this->address += 1;
+    for(int i = 0; i < codes.length(); i++){
+        this->memory[this->memory->length() + i] = codes[i];
     }
 }
 
@@ -20,22 +19,20 @@ void simpletron::Processor::clear(){
 
     this->accumulator = 0;
     this->instructionCounter = 0;
-    (this->instructionRegister) = 0;
+    this->instructionRegister = 0;
     this->operationCode = 0;
     this->operand = 0;
-    this->address = 0;
-}
-
-int simpletron::Processor::currentAddress(){
-    return this->address;
 }
 
 void simpletron::Processor::run(){
     this->instructionCounter = 0;
     // Run infinte loop through the instructions
-    for(int i = 0; i < this->address; i++){   
+    while(this->instructionCounter < this->memory->length()){   
         // get current instruction
         this->instructionRegister = this->memory[this->instructionCounter];
+        if(this->instructionRegister == 9999){
+            break;
+        }
 
         // get opcode and this->operand
         this->operationCode = (this->instructionRegister) / 100;
@@ -108,7 +105,7 @@ void simpletron::Processor::run(){
                 break;
 
             default:
-                //std::cout<<"%d Incorrect instruction \n", this->operationCode);
+                std::cout<<this->operationCode<<" incorrect instruction "<<std::endl;
                 break;
             
         }

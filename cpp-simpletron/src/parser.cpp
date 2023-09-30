@@ -91,7 +91,9 @@ simpletron::utils::Result<Expression*>* Parser::getNext(){
             }else if(name == "BRZ"){
                 return this->initBranch(4200);
             }else if(name == "HLT"){
-                return this->initBranch(4300);
+                return this->initOpcode(4300);
+            }else if(name == "END"){
+                return this->initOpcode(9999);
             }
             return this->initSubroutine();
         }

@@ -1,3 +1,5 @@
+use crate::simpletron::utils;
+
 enum Operands{
     READ,        // Read a word from the terminal into a specific location in memory
     WRITE,         // Write a word from a specific location in memory to the terminal
@@ -56,31 +58,29 @@ impl CPU {
         };
     }
 
-    pub fn load(&mut self) {
-        let mut inp = 0;
-        let mut index: usize = 0;
-        let mut line: String = String::new();
-        // loading program
-        while inp != -9999{
-            print!("{} >> ", index);
-            if let Err(error) = std::io::stdin().read_line(&mut line){
-                print!("invalid input {}", error);
-            }
-            inp =  line.trim().parse().unwrap();
-            self.memory[ index ] = inp;
-            print!("\n");
-            index += 1;
+    pub fn add(&mut self, data: Vec<i32>) {
+        for i in 0..data.len(){
+            self.memory[ i] = data[i];
         }
-        println!("*** Program loading completed ***");
-        print!("*** Program execution begins  ***");
+    }
+
+    pub fn clear(&mut self){
+        self.accumulator = 0;
+        self.instruction_register = 0;
+        self.operation_code = 0;
+        self.operand = 0;
+        self.memory = [0; SIZE];
     }
 
     pub fn run(&mut self){
+        self.instruction_counter = 0;
         // Run infinte loop through the instructions
-        let mut e = 0;
-        while e != 100 {   
+        while self.instruction_counter < self.memory.len() {   
             // get current instruction
             self.instruction_register = self.memory[self.instruction_counter];
+            if self.instruction_register == 9999{
+                break;
+            }
 
             // get opcode and self.operand
             self.operation_code = self.instruction_register / 100;
@@ -94,7 +94,7 @@ impl CPU {
                             let mut line: String = String::new();
                             if let Err(error) = std::io::stdin().read_line(&mut line){
                                 print!("invalid input {}", error);
-                                e = 100;
+                                self.instruction_counter = 100;
                             }
 
                             self.memory[ self.operand as usize ] = line.trim().parse().unwrap();
@@ -102,41 +102,41 @@ impl CPU {
                             self.instruction_counter += 1;
                         }
                         Operands::WRITE =>{
-                            println!("? {} from memory address: {}", self.memory[ self.operand as usize ], self.operand);
+                            println!("address {}: {} >> ? {} from memory address: {}", utils::format(self.instruction_counter as i32, 2), self.instruction_register, self.memory[ self.operand as usize ], self.operand);
                             self.instruction_counter += 1;
                         }
                         Operands::LOAD =>{
-                            println!("Loaded {} into the accumulator.", self.memory[ self.operand as usize ]);
+                            println!("address {}: {} >> Loaded {} into the accumulator.", utils::format(self.instruction_counter as i32, 2), self.instruction_register, self.memory[ self.operand as usize ]);
                             self.accumulator = self.memory[ self.operand as usize ];
                             self.instruction_counter += 1;
                         }
                         Operands::STORE =>{
-                            println!("Copied {} from the accumulator into memory address {}.",self.accumulator, self.operand);
+                            println!("address {}: {} >> copied {} from the accumulator into memory address {}.",utils::format(self.instruction_counter as i32, 2), self.instruction_register, self.accumulator, self.operand);
                             self.memory[ self.operand as usize ] = self.accumulator;
                             self.instruction_counter += 1;
                         }
                         Operands::ADD =>{
-                            println!("Add {} to the acummulator's value: {}.", self.memory[ self.operand as usize ], self.accumulator);                
+                            println!("address {}: {} >> add {} to the acummulator's value: {}.", utils::format(self.instruction_counter as i32, 2), self.instruction_register, self.memory[ self.operand as usize ], self.accumulator);                
                             self.accumulator += self.memory[ self.operand as usize ];
                             self.instruction_counter += 1;
                         }
                         Operands::SUBSTRACT =>{
-                            println!("Substract {} from the acummulator's value: {}.", self.memory[ self.operand as usize ], self.accumulator);                            
+                            println!("address {}: {} >> substract {} from the acummulator's value: {}.", utils::format(self.instruction_counter as i32, 2), self.instruction_register, self.memory[ self.operand as usize ], self.accumulator);                            
                             self.accumulator -= self.memory[ self.operand as usize ];
                             self.instruction_counter += 1;
                         }
                         Operands::DIVIDE =>{
-                            println!("Divide the acummulator's value: {} with {}.", self.accumulator, self.memory[ self.operand as usize ]); 
+                            println!("address {}: {} >> divide the acummulator's value: {} with {}.", utils::format(self.instruction_counter as i32, 2), self.instruction_register, self.accumulator, self.memory[ self.operand as usize ]); 
                             self.accumulator /= self.memory[ self.operand as usize ];
                             self.instruction_counter += 1;
                         }
                         Operands::MULTIPLY =>{
-                            println!("Multiply the accumulator's value: {} with {}.", self.accumulator, self.memory[ self.operand as usize ]);
+                            println!("address {}: {} >> multiply the accumulator's value: {} with {}.", utils::format(self.instruction_counter as i32, 2), self.instruction_register, self.accumulator, self.memory[ self.operand as usize ]);
                             self.accumulator *= self.memory[ self.operand as usize ];
                             self.instruction_counter += 1;
                         }
                         Operands::BRANCH =>{
-                            println!("Performed Jump to: {}", self.operand);
+                            println!("address {}: {} >> performed Jump to: {}", utils::format(self.instruction_counter as i32, 2), self.instruction_register, self.operand);
                             self.instruction_counter = self.operand as usize;
                         }
                         Operands::BRANCHNEG =>{
@@ -150,13 +150,14 @@ impl CPU {
                             }
                         }
                         Operands::HALT =>{
-                            println!("Program Halted");
-                            e = 100;
+                            println!("address {}: {} >> program Halted", utils::format(self.instruction_counter as i32, 2), self.instruction_register);
+                            self.instruction_counter = 100;
                         }
                     }
                 },
                 Err(error) =>{
-                    println!("encounterd a strange instruction: {}", error);
+                    println!("address {}: {} >> encounterd a strange instruction: {}", utils::format(self.instruction_counter as i32, 2), self.instruction_register, error);
+                    self.instruction_counter += 1;
                 }
             }
         }

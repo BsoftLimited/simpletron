@@ -11,9 +11,17 @@ std::string combine(std::vector<std::string> inputs){
 void simpletron::intro(){
    std::cout<<"*** Welcome to Simpletron! ***"<<std::endl;
    std::cout<<"*** Please enter your program one instruction ***"<<std::endl;
-   std::cout<<"*** (or data word) at a time. I will type the ***"<<std::endl;
    std::cout<<"*** location number and a question mark (?).  ***"<<std::endl;
    std::cout<<"*** You then type the word for that location. ***"<<std::endl;
+   std::cout<<"*** Type the end to stop inputing code***"<<std::endl;
+   std::cout<<"*** your program. ***"<<std::endl;
+}
+
+void simpletron::commands(){
+   std::cout<<"*** Welcome to Simpletron! ***"<<std::endl;
+   std::cout<<"*** List of commands ***\n"<<std::endl;
+   std::cout<<"*** LD address - Load value  from memory adress into accomulator ***"<<std::endl;
+   std::cout<<"*** RD address - Read user input and save into memory address***"<<std::endl;
    std::cout<<"*** Type the end to stop inputing code***"<<std::endl;
    std::cout<<"*** your program. ***"<<std::endl;
 }
@@ -33,11 +41,11 @@ void simpletron::version(){
 
 simpletron::Console::Console(){
     this->processor = new simpletron::Processor();
-    bool is_shell = IS_SHELL;
-    system(is_shell ? "cls" : "clear");
 }
 
 void simpletron::Console::load(std::string data){
+    bool is_shell = IS_SHELL;
+    system(is_shell ? "cls" : "clear");
     simpletron::utils::Result<std::string>* file = simpletron::utils::readFile(data);
     if(file->isError()){
         std::cout<<file->getMessage()<<std::endl;
@@ -49,28 +57,34 @@ void simpletron::Console::load(std::string data){
 
         this->processor->add(assembler->run());
         printf("*** Program loading completed ***\n");
+        this->run();
     }
 }
 
 void simpletron::Console::read(){
+    bool is_shell = IS_SHELL;
+    system(is_shell ? "cls" : "clear");
+
+    simpletron::intro();
+
     simpletron::assembler::Assembler assembler;
     std::vector<std::string> inputs;
 
     std::string input;
-    while (input != "end"){
+    while (input != "end" || input != "END"){
         std::cout<<"address "<<simpletron::utils::format(inputs.size(), 4)<<": >> ";
         std::getline(std::cin, input);
-        if(input != "end"){
-            std::string temp_data = combine(inputs) + " " + input;
-            if(assembler.init(temp_data)){
-                inputs.push_back(input);
-            }
+        
+        std::string temp_data = combine(inputs) + " " + input;
+        if(assembler.init(temp_data)){
+            inputs.push_back(input);
         }
     }
 
     if(input.length() > 0){
         this->processor->add(assembler.run());
         printf("*** Program loading completed ***\n");
+        this->run();
     }
 }
 

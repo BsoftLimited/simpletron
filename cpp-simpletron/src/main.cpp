@@ -14,9 +14,9 @@ int main(int length, char** args){
             console.load(args[1]);
         }
     }else{
+        simpletron::intro();
         console.read();
     }
-    console.run();
 
     return 0;
 }

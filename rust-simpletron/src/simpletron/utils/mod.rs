@@ -2,7 +2,7 @@ mod character;
 
 pub use character::Character;
 
-pub fn hex(value: u32)->String{
+pub fn hex(value: i32)->String{
     let mut init = value;
     let mut builder = String::new();
     while init > 0{
@@ -21,11 +21,11 @@ pub fn hex(value: u32)->String{
     return if builder.is_empty() { String::from("0") } else { builder };
 }
 
-pub fn from_hex(numb: &str)->u32{
+pub fn from_hex(numb: &str)->i32{
     if numb.contains("0x") || numb.contains("0b"){
-        let mut number: u32 = 0;
+        let mut number: i32 = 0;
         for i in 2..numb.len(){
-            let mut value = numb.chars().nth(i).unwrap() as u32;
+            let mut value = numb.chars().nth(i).unwrap() as i32;
             if value >= 65 && value <= 70{
                 value -= 55;
             }else if value >= 97 && value <= 102{
@@ -33,9 +33,17 @@ pub fn from_hex(numb: &str)->u32{
             }else if value >= 48 && value <= 57{
                 value -= 48;
             }
-            number += value * u32::pow( if numb.contains("0x") { 16 } else { 2 }, (numb.len() - i - 1 ) as u32);
+            number += value * i32::pow( if numb.contains("0x") { 16 } else { 2 }, (numb.len() - i - 1 ) as u32);
         }
         return number;   
     }
     return numb.parse().unwrap(); 
+}
+
+pub fn format(value: i32, count: usize)-> String{
+    let mut init = format!("{}", value);
+    while init.len() < count{
+        init = format!("0{}", init);
+    }
+    return init;
 }

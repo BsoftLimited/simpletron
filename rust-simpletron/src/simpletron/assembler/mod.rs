@@ -19,15 +19,19 @@ impl Assemblier{
         let mut codes: Vec<Expression> = Vec::new();
 
         while parser.next_token(){
-            let init = parser.get_next();
-            if(parser.has_error()){
-                return false;
-            }
-            if (matches!(init, Expression::Branch{ nemode:_ , address:_ }) || matches!(init, Expression::Opcode(_))) && sub.is_some(){
-                codes.push(init);
-            }else if let Expression::Subroutine{name} = init{
-                self.insert(&mut sub, &mut codes);
-                sub = Some(name);
+            match parser.get_next(){
+                Err(error) =>{
+                    println!("{}", error);
+                    return false;
+                },
+                Ok(init) =>{
+                    if (matches!(init, Expression::Branch{ nemode:_ , address:_ }) || matches!(init, Expression::Opcode(_))) && sub.is_some(){
+                        codes.push(init);
+                    }else if let Expression::Subroutine{name} = init{
+                        self.insert(&mut sub, &mut codes);
+                        sub = Some(name);
+                    }
+                }
             }
         }
         self.insert(&mut sub, &mut codes);
@@ -38,14 +42,14 @@ impl Assemblier{
         if sub.is_some() && !codes.is_empty(){
             self.subroutines.push((sub.as_ref().unwrap().clone(),  codes.to_vec()));
             codes.clear();
-        }else !codes.is_empty() && self.subroutines.is_empty(){
+        }else if !codes.is_empty() && self.subroutines.is_empty(){
             self.subroutines.push(( String::from("_start") ,  codes.to_vec()));
             codes.clear();
         }
     }
 
-    pub fn run(&mut self)->Vec<u32>{
-        let mut codes:Vec<u32> = Vec::new();
+    pub fn run(&mut self)->Vec<i32>{
+        let mut codes:Vec<i32> = Vec::new();
         let mut addresses: HashMap<String, u16> = HashMap::new();
 
         let mut current: u16 = 0000;
@@ -58,10 +62,10 @@ impl Assemblier{
         for subroutine in &self.subroutines{
             for exp in subroutine.1.clone(){
                 if let Expression::Opcode(code) = exp{
-                    codes.push(code.clone() as u32);
+                    codes.push(code.clone() as i32);
                 }else if let Expression::Branch{nemode, address} = exp{
                     let init = nemode + addresses[&address];
-                    codes.push(init as u32);
+                    codes.push(init as i32);
                 }
             }
         }
